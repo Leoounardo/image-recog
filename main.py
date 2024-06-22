@@ -9,7 +9,7 @@ transform = transforms.Compose(
      transforms.RandomResizedCrop(224),
      transforms.RandomHorizontalFlip(),
      transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])     ])
 
 batch_size = 32
 
@@ -85,10 +85,7 @@ class Net(nn.Module):
 
         return x
 
-
 import torch.optim as optim
-
-
 
 if __name__ == '__main__':
 
@@ -112,7 +109,7 @@ if __name__ == '__main__':
     net.train()
 
     print("chegamos até aqui")
-    for epoch in range(40):  # loop no dataset multiplas vezes
+    for epoch in range(50):  # loop no dataset multiplas vezes
 
         running_loss = 0.0
         for i, data in enumerate(trainloader, start=0):
