@@ -104,14 +104,15 @@ if __name__ == '__main__':
     
     net = Net()
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9) 
+    optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
+    # optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9) 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
+    print(device)
     net.to(device)
     net.train()
 
     print("chegamos até aqui")
-    for epoch in range(20):  # loop no dataset multiplas vezes
+    for epoch in range(40):  # loop no dataset multiplas vezes
 
         running_loss = 0.0
         for i, data in enumerate(trainloader, start=0):
@@ -134,8 +135,8 @@ if __name__ == '__main__':
                 running_loss = 0.0
 
     print('Finished Training')
-    PATH = '/savetest.pth'
-    torch.save(net.state_dict(), PATH)
+    # PATH = '/savetest'
+    # torch.save(net.state_dict(), PATH)
     dataiter = iter(testloader)
     images, labels = next(dataiter)
 
@@ -144,3 +145,47 @@ if __name__ == '__main__':
     print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
 
     images, labels = images.to(device), labels.to(device)
+    outputs = net(images)
+    print(outputs)
+
+    for i in range(4):
+        preds = outputs[i]
+        cp = torch.argmax(preds)
+        cgt = labels[i]
+        print(f'Classe predita (idx): {cp}, Classe gt (idx): {cgt}')
+        print(f'Classe predita: {classes[cp]}, Classe gt: {classes[cgt]}\n\n')
+
+    correct = 0
+    total = 0
+    # Como não estamos treinando, não é necessário calcular os gradientes
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data[0].to(device), data[1].to(device)
+            # calculando as saidas da CNN
+            outputs = net(images)
+            # classe com maior score
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f'Acurácia da CNN: {100 * correct // total} %')
+
+
+    correct_pred = {classname: 0 for classname in classes}
+    total_pred = {classname: 0 for classname in classes}
+
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data[0].to(device), data[1].to(device)
+            outputs = net(images)
+            _, predictions = torch.max(outputs, 1)
+
+            for label, prediction in zip(labels, predictions):
+                if label == prediction:
+                    correct_pred[classes[label]] += 1
+                total_pred[classes[label]] += 1
+
+
+    for classname, correct_count in correct_pred.items():
+        accuracy = 100 * float(correct_count) / total_pred[classname]
+        print(f'Accurácia para classe: {classname:5s} é {accuracy:.1f} %')
