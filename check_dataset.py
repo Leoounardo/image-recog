@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from PIL import ImageFile, Image
-# ImageFile.LOAD_TRUNCATED_IMAGES = True
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 mainpath = 'dataset/'
 paths = ['test/', 'train/', 'val/']
 folders = ['fractured/', 'not fractured/']
 
 def remove_images():
+    files_to_remove = []
     for path in paths:
         for folder in folders:
             count = 0
@@ -23,10 +24,13 @@ def remove_images():
                         img.close()
                     except (IOError, SyntaxError) as e:
                         print(e, filename)
-                        print('removing:', filename)
-                        remove(pathfolder+filename)
+                        files_to_remove.append(pathfolder+filename)
+                     
                         count +=1
-
+    
+    for file in files_to_remove:
+        print("removing:", file)
+        remove(file)
 
 def imshow(img, title = None):
     img = img      

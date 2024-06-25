@@ -60,7 +60,7 @@ if __name__ == '__main__':
     use_device = device('cuda:0' if cuda.is_available() else 'cpu')
     net = net.to(use_device)
   
-    num_epochs = 20
+    num_epochs = 12
     train_losses = []
     train_accuracies = []
     val_losses = []
@@ -88,7 +88,7 @@ if __name__ == '__main__':
             _, predicted_train = max(outputs.data, 1)
             total_train += labels.size(0)
             correct_train += (predicted_train == labels).sum().item()
-            if i % 100 == 99:
+            if i % 50 == 99:
                 print(f'Epoch {epoch}/{num_epochs}, Batch {i + 1}/{len(trainloader)}, '
                   f'Training Loss: {running_loss / 100}, Training Acc: {100 * correct_train / total_train}%')
 
