@@ -36,8 +36,14 @@ valset = ImageFolder(root=mainpath+"val/", transform=val_transform)
 valloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=4)
 
 classes = trainset.classes
-
 if __name__ == '__main__':
+    print("PrediçÃO de Fraturas Osseas")
+    print("Classes dividas em:", classes)
+    print("QTD Imagens em:")
+    print("- Treino:", len(trainset))
+    print("- Teste:", len(testset))
+    print("- Val:", len(valset))
+
     dataiter = iter(trainloader)
     images, labels = next(dataiter)
     class_names = trainset.classes
@@ -101,7 +107,7 @@ if __name__ == '__main__':
                 total_val += labels.size(0)
                 correct_val += (predicted_val == labels).sum().item()
 
-            # Calculate validation accuracy after the epoch
+        # Calculate validation accuracy after the epoch
         validation_accuracy = correct_val / total_val
         average_val_loss = val_running_loss / len(valloader)
 
