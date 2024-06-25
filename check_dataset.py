@@ -1,10 +1,10 @@
  
-from os import listdir
+from os import listdir, remove
 import matplotlib.pyplot as plt
 import numpy as np
 
 from PIL import ImageFile, Image
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+# ImageFile.LOAD_TRUNCATED_IMAGES = True
 mainpath = 'dataset/'
 paths = ['test/', 'train/', 'val/']
 folders = ['fractured/', 'not fractured/']
@@ -23,8 +23,10 @@ def remove_images():
                         img.close()
                     except (IOError, SyntaxError) as e:
                         print(e, filename)
+                        print('removing:', filename)
+                        remove(pathfolder+filename)
                         count +=1
-            print("need to remove:", count)
+
 
 def imshow(img, title = None):
     img = img      
@@ -64,3 +66,7 @@ def imshow2(images, labels, class_names, fontsize=10, ncol=7, nrow=5):
     
     plt.tight_layout()
     plt.show()
+
+
+if __name__ == '__main__':
+    remove_images()

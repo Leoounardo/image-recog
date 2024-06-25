@@ -33,7 +33,7 @@ testset = ImageFolder(root=mainpath+"test/", transform=val_transform)
 testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=4)
 
 valset = ImageFolder(root=mainpath+"val/", transform=val_transform)
-valloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=4)
+valloader = DataLoader(valset, batch_size=batch_size, shuffle=False, num_workers=4)
 
 classes = trainset.classes
 if __name__ == '__main__':
@@ -61,7 +61,12 @@ if __name__ == '__main__':
     net = net.to(use_device)
   
     num_epochs = 20
-
+    train_losses = []
+    train_accuracies = []
+    val_losses = []
+    val_accuracies = []
+    predictions = []
+    targets = []
     for epoch in range(num_epochs):
         net.train()
         running_loss = 0.0
@@ -114,6 +119,11 @@ if __name__ == '__main__':
         print(f'Epoch {epoch}/{num_epochs} | ' f'Trn Loss: {running_loss / len(trainloader)} | ' f'Trn Acc: {100 * training_accuracy}% | '
             f'Vall Loss: {average_val_loss} | '
             f'Val Acc: {100 * validation_accuracy}%')
+        
+        train_losses.append(running_loss / len(trainloader))
+        train_accuracies.append(training_accuracy)
+        val_losses.append(average_val_loss)
+        val_accuracies.append(validation_accuracy)
         scheduler.step()
 
     print('Finished Training')
